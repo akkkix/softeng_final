@@ -29,9 +29,7 @@ class DbManager
 
 end
 
-print "command> "
-command = gets.chop
-if command == "record drive" then
+def record_drive
   # 自動車の走行を記録
   print "出発地？>"
   dep = gets.chop
@@ -41,8 +39,9 @@ if command == "record drive" then
   dist = gets.chop
   
   DbManager.get_db.execute("INSERT INTO drive VALUES(null,?,?,?,?)",Time.now.to_i,dep,dest,dist.to_i)
+end
 
-elsif command == "record gas" then
+def record_gas
   # 自動車への給油を記録する
   print "単価？>"
   price = gets.chop
@@ -52,19 +51,36 @@ elsif command == "record gas" then
   cost = gets.chop
 
   DbManager.get_db.execute("INSERT INTO gas VALUES(null,?,?,?,?)",Time.now.to_i,price.to_i,amount.to_i,cost.to_i)
+end
 
-elsif command == "show drive" then
+def show_drive
   # 記録したすべての走行記録を表示
   DbManager.get_db.execute('select * from drive') do |row|
     puts "記録日時:" + Time.at(row["date"]).to_s + ",出発地: " + row["dep"].to_s + ",到着地: " + row["dest"].to_s + ",走行距離: " + row["dist"].to_s + "km"
   end
 
-elsif command == "show gas" then
+end
+
+def show_gas
   # 記録したすべての給油を表示
   DbManager.get_db.execute('select * from gas') do |row|
     puts "記録日時:" + Time.at(row["date"]).to_s + ",単価: " + row["price"].to_s + "円/L,給油量: " + row["amount"].to_s + "L,合計金額: " + row["cost"].to_s + "円"
   end
-
 end
 
+print "command> "
+command = gets.chop
+if command == "record drive" then
+  record_drive()
+
+elsif command == "record gas" then
+  record_gas()
+
+elsif command == "show drive" then
+  show_drive()
+
+elsif command == "show gas" then
+  show_gas()
+
+end
 DbManager.close_db
